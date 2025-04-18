@@ -70,7 +70,7 @@ def load_dataframe_from_upload(uploaded_file):
 # --- Funções de Backtest e Análise (sem alterações) ---
 def run_backtest(df, estrategia_func, estrategia_nome):
      # Filtrar pela Odd_H_Back maior que 1.30
-    #df = df[df['Odd_Over25_FT'] >= 1.30].copy() # Use .copy() para evitar SettingWithCopyWarning
+    #df = df[df['Odd_Under25_FT'] >= 1.30].copy() # Use .copy() para evitar SettingWithCopyWarning
      # Aplicar a estratégia
     df_filtrado = estrategia_func(df)
     df_filtrado['Total_Goals'] = df_filtrado['Goals_H_FT'] + df_filtrado['Goals_A_FT']
@@ -78,11 +78,11 @@ def run_backtest(df, estrategia_func, estrategia_nome):
     # Verifica se o df_filtrado não está vazio antes de calcular o Profit
     if not df_filtrado.empty:
         df_filtrado['Profit'] = df_filtrado.apply(
-        lambda row: (row['Odd_Over25_FT'] - 1) if row['Total_Goals'] > 2 else -1,
+        lambda row: (row['Odd_Under25_FT'] - 1) if row['Total_Goals'] < 3 else -1,
             axis=1
         )
         total_jogos = len(df_filtrado)
-        acertos = len(df_filtrado[df_filtrado['Total_Goals'] > 2])
+        acertos = len(df_filtrado[df_filtrado['Total_Goals'] < 3 ])
         taxa_acerto = acertos / total_jogos if total_jogos > 0 else 0
         lucro_total = df_filtrado['Profit'].sum()
     else:
@@ -116,7 +116,7 @@ def check_moving_averages(df_filtrado, estrategia_nome):
         }
 
     
-    df_filtrado['Acerto'] = (df_filtrado['Total_Goals'] > 2).astype(int)
+    df_filtrado['Acerto'] = (df_filtrado['Total_Goals'] < 3 ).astype(int)
     ultimos_8 = df_filtrado.tail(8)
     ultimos_40 = df_filtrado.tail(40)
     media_8 = ultimos_8['Acerto'].mean() if not ultimos_8.empty else 0
