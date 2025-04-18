@@ -70,7 +70,7 @@ def load_dataframe_from_upload(uploaded_file):
 # --- Funções de Backtest e Análise (sem alterações) ---
 def run_backtest(df, estrategia_func, estrategia_nome):
      # Filtrar pela Odd_H_Back maior que 1.30
-    df = df[df['Odd_A_HT'] >= 1.30].copy() # Use .copy() para evitar SettingWithCopyWarning
+  #  df = df[df['Odd_A_HT'] >= 1.30].copy() # Use .copy() para evitar SettingWithCopyWarning
      # Aplicar a estratégia
     df_filtrado = estrategia_func(df)
 
