@@ -188,7 +188,7 @@ def check_combined_moving_averages(df_backtest_result, combined_strategy_name):
         lucro_40 = ultimos_40['Profit'].sum()
 
         # Critério de aprovação (AJUSTE CONFORME NECESSÁRIO)
-        acima_limiares = media_8 > 0.96 and media_40 > 0.96
+        acima_limiares = media_8 > 0.95 and media_40 > 0.95
 
         return {
             "Estratégia": combined_strategy_name,
