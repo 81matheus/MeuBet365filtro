@@ -123,7 +123,7 @@ def check_moving_averages(df_filtrado, estrategia_nome):
     media_40 = ultimos_40['Acerto'].mean() if not ultimos_40.empty else 0
     lucro_8 = ultimos_8['Profit'].sum()
     lucro_40 = ultimos_40['Profit'].sum()
-    acima_das_medias = lucro_8 >= 0.1 and lucro_40 > 0.1 and media_8 >= 0.5 and media_40 > 0.5
+    acima_das_medias = lucro_8 >= 0.1 and lucro_40 > 0.1 and media_8 >= 0.95 and media_40 >= 0.95
 
     return {
         "Estratégia": estrategia_nome,
