@@ -80,7 +80,7 @@ APPROVED_LEAGUES = set([
 
 # --- INÍCIO: Definição das Estratégias Correct Score Lay a Testar ---
 cs_lay_strategies_to_test = [
-     'Lay_0x1', 'Lay_1x0', 'Lay_1x1'
+     'Lay_1x1'
 ]
 # --- FIM: Definição das Estratégias Correct Score Lay a Testar ---
 
@@ -90,11 +90,7 @@ def get_score_condition(df, cs_lay_name):
     """Retorna a condição booleana do pandas para o placar da estratégia CS Lay ocorrer."""
     ocorrencias = pd.Series(False, index=df.index) # Default False
     try:
-        if cs_lay_name == 'Lay_0x1':
-            ocorrencias = (df['Goals_H'] == 0) & (df['Goals_A'] == 1)
-        elif cs_lay_name == 'Lay_1x0':
-            ocorrencias = (df['Goals_H'] == 1) & (df['Goals_A'] == 0)
-        elif cs_lay_name == 'Lay_1x1':
+        if cs_lay_name == 'Lay_1x1':
             ocorrencias = (df['Goals_H'] == 1) & (df['Goals_A'] == 1)
 
         else:
