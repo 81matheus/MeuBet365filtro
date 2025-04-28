@@ -80,10 +80,7 @@ APPROVED_LEAGUES = set([
 
 # --- INÍCIO: Definição das Estratégias Correct Score Lay a Testar ---
 cs_lay_strategies_to_test = [
-    'Lay_0x0', 'Lay_0x1', 'Lay_1x0', 'Lay_1x1',
-    'Lay_0x2', 'Lay_2x0', 'Lay_1x2', 'Lay_2x1', 'Lay_2x2',
-    'Lay_0x3', 'Lay_3x0', 'Lay_1x3', 'Lay_3x1', 'Lay_2x3', 'Lay_3x2', 'Lay_3x3',
-    'Lay_Goleada_H', 'Lay_Goleada_A'
+     'Lay_0x1', 'Lay_1x0', 'Lay_1x1'
 ]
 # --- FIM: Definição das Estratégias Correct Score Lay a Testar ---
 
