@@ -117,13 +117,13 @@ def check_moving_averages(df_filtrado, estrategia_nome):
 
     
     df_filtrado['Acerto'] = (df_filtrado['Total_Goals'] < 3 ).astype(int)
-    ultimos_8 = df_filtrado.tail(8)
-    ultimos_40 = df_filtrado.tail(40)
+    ultimos_8 = df_filtrado.tail(10)
+    ultimos_40 = df_filtrado.tail(20)
     media_8 = ultimos_8['Acerto'].mean() if not ultimos_8.empty else 0
     media_40 = ultimos_40['Acerto'].mean() if not ultimos_40.empty else 0
     lucro_8 = ultimos_8['Profit'].sum()
     lucro_40 = ultimos_40['Profit'].sum()
-    acima_das_medias = lucro_8 >= 0.1 and lucro_40 > 0.1 and media_8 >= 0.95 and media_40 >= 0.95
+    acima_das_medias = lucro_8 >= 0.1 and lucro_40 > 0.1 and media_8 >= 0.75 and media_40 >= 0.75
 
     return {
         "Estratégia": estrategia_nome,
