@@ -708,7 +708,7 @@ def define_var_strategies(vars_dict):
 # --- Fim Definição das estratégias VAR ---
 
 # --- Título ---
-st.title("Backtest Combinado: Filtro VAR + Lay Correct Score 99%")
+st.title("Backtest: Correct Score 99%")
 
 # --- Carregar Histórico do GitHub ---
 st.header("Carregamento da Base Histórica")
