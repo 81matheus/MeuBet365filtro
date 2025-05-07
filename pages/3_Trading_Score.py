@@ -224,7 +224,7 @@ def check_combined_moving_averages(df_backtest_result, combined_strategy_name):
         lucro_40 = ultimos_40['Profit'].sum()
 
         # Critério de aprovação (AJUSTE CONFORME NECESSÁRIO)
-        acima_limiares = media_8 >= 0.99 and media_40 >= 0.99
+        acima_limiares = media_8 > 0.96 and media_40 > 0.96
 
         return {
             "Estratégia": combined_strategy_name,
@@ -419,7 +419,7 @@ def define_var_strategies(vars_dict):
     # Define as funções lambda usando o vars_dict pré-calculado
     # (As 152 definições de estratégia como no original)
     # --- Cole aqui as 152 definições de estrategia_X ---
-    # Exemplo das primeiras:
+    #Base Casa
     def estrategia_1(df): return df[(vars_dict['VAR13'] >= 0.023) & (vars_dict['VAR13'] <= 0.25) & (vars_dict['VAR30'] >= 0.0441) & (vars_dict['VAR30'] <= 0.0497)].copy()
     def estrategia_2(df): return df[(vars_dict['VAR13'] >= 0.023) & (vars_dict['VAR13'] <= 0.25) & (vars_dict['VAR45'] >= 0.4375) & (vars_dict['VAR45'] <= 0.46)].copy()
     def estrategia_3(df): return df[(vars_dict['VAR13'] >= 0.023) & (vars_dict['VAR13'] <= 0.25) & (vars_dict['VAR48'] >= 1.0) & (vars_dict['VAR48'] <= 2.0455)].copy()
@@ -496,6 +496,7 @@ def define_var_strategies(vars_dict):
     def estrategia_74(df): return df[(vars_dict['VAR13'] >= 0.023) & (vars_dict['VAR13'] <= 0.25) & (vars_dict['VAR61'] >= 0.1031) & (vars_dict['VAR61'] <= 0.1603)].copy()
     def estrategia_75(df): return df[(vars_dict['VAR13'] >= 0.023) & (vars_dict['VAR13'] <= 0.25) & (vars_dict['VAR14'] >= 1.3671) & (vars_dict['VAR14'] <= 1.5102)].copy()
     def estrategia_76(df): return df[(vars_dict['VAR13'] >= 0.023) & (vars_dict['VAR13'] <= 0.25) & (vars_dict['VAR50'] >= 0.8531) & (vars_dict['VAR50'] <= 0.9052)].copy()
+    #Base Fora
     def estrategia_77(df): return df[(vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.4633) & (vars_dict['VAR01'] >= 1.07) & (vars_dict['VAR01'] <= 1.6667)].copy()
     def estrategia_78(df): return df[(vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.4633) & (vars_dict['VAR03'] >= 0.6) & (vars_dict['VAR03'] <= 0.9345)].copy()
     def estrategia_79(df): return df[(vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.4633) & (vars_dict['VAR77'] >= 0.0) & (vars_dict['VAR77'] <= 0.4783)].copy()
@@ -572,6 +573,83 @@ def define_var_strategies(vars_dict):
     def estrategia_150(df): return df[(vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.4633) & (vars_dict['VAR48'] >= 1.0) & (vars_dict['VAR48'] <= 1.0952)].copy()
     def estrategia_151(df): return df[(vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.4633) & (vars_dict['VAR34'] >= 0.2) & (vars_dict['VAR34'] <= 0.2093)].copy()
     def estrategia_152(df): return df[(vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.4633) & (vars_dict['VAR58'] >= 0.2631) & (vars_dict['VAR58'] <= 0.5356)].copy()
+    #Base Empate
+    def estrategia_153(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR17'] >= 1.6615) & (vars_dict['VAR17'] <= 2.8279)].copy() 
+    def estrategia_154(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR38'] >= 0.6618) & (vars_dict['VAR38'] <= 1.2069)].copy() 
+    def estrategia_155(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR01'] >= 5.0) & (vars_dict['VAR01'] <= 7.563)].copy() 
+    def estrategia_156(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR71'] >= 4.0) & (vars_dict['VAR71'] <= 6.563)].copy() 
+    def estrategia_157(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR16'] >= 0.0726) & (vars_dict['VAR16'] <= 0.1916)].copy() 
+    def estrategia_158(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR03'] >= 0.1322) & (vars_dict['VAR03'] <= 0.2)].copy() 
+    def estrategia_159(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR34'] >= 0.0875) & (vars_dict['VAR34'] <= 0.1088)].copy() 
+    def estrategia_160(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR19'] >= 0.0577) & (vars_dict['VAR19'] <= 0.1677)].copy() 
+    def estrategia_161(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR36'] >= 0.0785) & (vars_dict['VAR36'] <= 0.0984)].copy() 
+    def estrategia_162(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR22'] >= 0.0577) & (vars_dict['VAR22'] <= 0.1425)].copy() 
+    def estrategia_163(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR15'] >= 0.2133) & (vars_dict['VAR15'] <= 0.3935)].copy() 
+    def estrategia_164(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR21'] >= 0.178) & (vars_dict['VAR21'] <= 0.287)].copy() 
+    def estrategia_165(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR39'] >= 1.3483) & (vars_dict['VAR39'] <= 3.3621)].copy() 
+    def estrategia_166(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR12'] >= 0.1591) & (vars_dict['VAR12'] <= 0.23)].copy() 
+    def estrategia_167(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR54'] >= 0.6952) & (vars_dict['VAR54'] <= 0.9651)].copy() 
+    def estrategia_168(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR09'] >= 0.3804) & (vars_dict['VAR09'] <= 0.7545)].copy() 
+    def estrategia_169(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR28'] >= 0.0482) & (vars_dict['VAR28'] <= 0.0561)].copy() 
+    def estrategia_170(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR62'] >= -21.5623) & (vars_dict['VAR62'] <= -19.1663)].copy() 
+    def estrategia_171(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR57'] >= 0.2823) & (vars_dict['VAR57'] <= 0.3242)].copy() 
+    def estrategia_172(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR51'] >= 0.2759) & (vars_dict['VAR51'] <= 0.3182)].copy() 
+    def estrategia_173(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR74'] >= 0.307) & (vars_dict['VAR74'] <= 0.3929)].copy() 
+    def estrategia_174(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR10'] >= 1.3254) & (vars_dict['VAR10'] <= 2.6286)].copy() 
+    def estrategia_175(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR56'] >= 0.0602) & (vars_dict['VAR56'] <= 0.0657)].copy() 
+    def estrategia_176(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR63'] >= -20.0325) & (vars_dict['VAR63'] <= -17.1267)].copy() 
+    def estrategia_177(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR75'] >= 0.4286) & (vars_dict['VAR75'] <= 0.5238)].copy() 
+    def estrategia_178(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR13'] >= 0.0674) & (vars_dict['VAR13'] <= 0.1317)].copy() 
+    def estrategia_179(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR46'] >= 0.675) & (vars_dict['VAR46'] <= 0.7188)].copy() 
+    def estrategia_180(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR65'] >= -9.1997) & (vars_dict['VAR65'] <= -7.9752)].copy() 
+    def estrategia_181(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR49'] >= 4.878) & (vars_dict['VAR49'] <= 16.2162)].copy() 
+    def estrategia_182(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR08'] >= 0.5207) & (vars_dict['VAR08'] <= 0.5704)].copy() 
+    def estrategia_183(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR32'] >= 0.2353) & (vars_dict['VAR32'] <= 0.25)].copy() 
+    def estrategia_184(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR47'] >= 0.0617) & (vars_dict['VAR47'] <= 0.205)].copy() 
+    def estrategia_185(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR29'] >= 0.0692) & (vars_dict['VAR29'] <= 0.0755)].copy() 
+    def estrategia_186(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR50'] >= 0.9157) & (vars_dict['VAR50'] <= 1.0707)].copy() 
+    def estrategia_187(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR45'] >= 0.0072) & (vars_dict['VAR45'] <= 0.3452)].copy() 
+    def estrategia_188(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR48'] >= 2.8969) & (vars_dict['VAR48'] <= 138.8889)].copy() 
+    def estrategia_189(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR73'] >= 0.0) & (vars_dict['VAR73'] <= 0.0921)].copy() 
+    def estrategia_190(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR07'] >= 1.7533) & (vars_dict['VAR07'] <= 1.9205)].copy() 
+    def estrategia_191(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR64'] >= -1.8576) & (vars_dict['VAR64'] <= -1.6379)].copy() 
+    def estrategia_192(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR66'] >= 4.1027) & (vars_dict['VAR66'] <= 16.4377)].copy() 
+    def estrategia_193(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR41'] >= 0.2641) & (vars_dict['VAR41'] <= 0.331)].copy() 
+    def estrategia_194(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR72'] >= 0.4231) & (vars_dict['VAR72'] <= 0.5094)].copy() 
+    def estrategia_195(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR53'] >= 0.4221) & (vars_dict['VAR53'] <= 0.4566)].copy() 
+    def estrategia_196(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR44'] >= 0.0265) & (vars_dict['VAR44'] <= 1.0)].copy() 
+    def estrategia_197(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR05'] >= 0.2836) & (vars_dict['VAR05'] <= 0.364)].copy() 
+    def estrategia_198(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR55'] >= 0.6164) & (vars_dict['VAR55'] <= 0.8371)].copy() 
+    def estrategia_199(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR52'] >= 0.1841) & (vars_dict['VAR52'] <= 0.2353)].copy() 
+    def estrategia_200(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR31'] >= 0.1607) & (vars_dict['VAR31'] <= 0.1693)].copy() 
+    def estrategia_201(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR18'] >= 0.3302) & (vars_dict['VAR18'] <= 0.3489)].copy() 
+    def estrategia_202(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR70'] >= 1.7475) & (vars_dict['VAR70'] <= 2.5256)].copy() 
+    def estrategia_203(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR02'] >= 2.7475) & (vars_dict['VAR02'] <= 3.5256)].copy() 
+    def estrategia_204(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR60'] >= 0.0703) & (vars_dict['VAR60'] <= 0.1652)].copy() 
+    def estrategia_205(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR68'] >= 2.0093) & (vars_dict['VAR68'] <= 4.7224)].copy() 
+    def estrategia_206(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR76'] >= 0.6714) & (vars_dict['VAR76'] <= 64.3333)].copy() 
+    def estrategia_207(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR67'] >= -0.2402) & (vars_dict['VAR67'] <= -0.1705)].copy() 
+    def estrategia_208(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR14'] >= 2.2826) & (vars_dict['VAR14'] <= 3.3088)].copy() 
+    def estrategia_209(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR33'] >= 0.0597) & (vars_dict['VAR33'] <= 0.0667)].copy() 
+    def estrategia_210(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR25'] >= 0.34) & (vars_dict['VAR25'] <= 0.3892)].copy() 
+    def estrategia_211(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR42'] >= 0.2786) & (vars_dict['VAR42'] <= 0.6979)].copy() 
+    def estrategia_212(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR04'] >= 2.0718) & (vars_dict['VAR04'] <= 4.25)].copy() 
+    def estrategia_213(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR06'] >= 0.2353) & (vars_dict['VAR06'] <= 0.4827)].copy() 
+    def estrategia_214(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR58'] >= 0.1894) & (vars_dict['VAR58'] <= 0.2443)].copy() 
+    def estrategia_215(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR35'] >= 0.0652) & (vars_dict['VAR35'] <= 0.0723)].copy() 
+    def estrategia_216(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR20'] >= 1.4304) & (vars_dict['VAR20'] <= 1.4841)].copy() 
+    def estrategia_217(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR77'] >= 0.7636) & (vars_dict['VAR77'] <= 0.8)].copy() 
+    def estrategia_218(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR40'] >= 0.1277) & (vars_dict['VAR40'] <= 0.14)].copy() 
+    def estrategia_219(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR37'] >= 0.0789) & (vars_dict['VAR37'] <= 0.0984)].copy() 
+    def estrategia_220(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR11'] >= 0.0253) & (vars_dict['VAR11'] <= 0.8988)].copy() 
+    def estrategia_221(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR59'] >= 0.0) & (vars_dict['VAR59'] <= 0.0024)].copy() 
+    def estrategia_222(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR24'] >= 0.2313) & (vars_dict['VAR24'] <= 0.2546)].copy() 
+    def estrategia_223(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR26'] >= 0.0421) & (vars_dict['VAR26'] <= 0.0493)].copy() 
+    def estrategia_224(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR43'] >= 0.1162) & (vars_dict['VAR43'] <= 0.1515)].copy() 
+    def estrategia_225(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR23'] >= 0.0013) & (vars_dict['VAR23'] <= 0.0329)].copy() 
+    def estrategia_226(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR27'] >= 0.0969) & (vars_dict['VAR27'] <= 0.1019)].copy() 
+    def estrategia_227(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR61'] >= 0.0959) & (vars_dict['VAR61'] <= 0.1699)].copy() 
+    def estrategia_228(df): return df[(vars_dict['VAR30'] >= 0.0186) & (vars_dict['VAR30'] <= 0.0608) & (vars_dict['VAR69'] >= 2.7442) & (vars_dict['VAR69'] <= 4.8548)].copy()
 
     # --- Lista de estratégias ---
     strategy_list = [
@@ -611,14 +689,26 @@ def define_var_strategies(vars_dict):
         (estrategia_129, "Estrategia_129"), (estrategia_130, "Estrategia_130"), (estrategia_131, "Estrategia_131"), (estrategia_132, "Estrategia_132"), (estrategia_133, "Estrategia_133"), (estrategia_134, "Estrategia_134"), (estrategia_135, "Estrategia_135"),
         (estrategia_136, "Estrategia_136"), (estrategia_137, "Estrategia_137"), (estrategia_138, "Estrategia_138"), (estrategia_139, "Estrategia_139"), (estrategia_140, "Estrategia_140"), (estrategia_141, "Estrategia_141"), (estrategia_142, "Estrategia_142"),
         (estrategia_143, "Estrategia_143"), (estrategia_144, "Estrategia_144"), (estrategia_145, "Estrategia_145"), (estrategia_146, "Estrategia_146"), (estrategia_147, "Estrategia_147"), (estrategia_148, "Estrategia_148"),
-        (estrategia_149, "Estrategia_149"), (estrategia_150, "Estrategia_150"), (estrategia_151, "Estrategia_151"), (estrategia_152, "Estrategia_152")
+        (estrategia_149, "Estrategia_149"), (estrategia_150, "Estrategia_150"), (estrategia_151, "Estrategia_151"), (estrategia_152, "Estrategia_152"), (estrategia_153, "Estrategia_153"), (estrategia_154, "Estrategia_154"), (estrategia_155, "Estrategia_155"), (estrategia_156, "Estrategia_156"), (estrategia_157, "Estrategia_157"), (estrategia_158, "Estrategia_158"), 
+        (estrategia_159, "Estrategia_159"), (estrategia_160, "Estrategia_160"), (estrategia_161, "Estrategia_161"), (estrategia_162, "Estrategia_162"), (estrategia_163, "Estrategia_163"), (estrategia_164, "Estrategia_164"), (estrategia_165, "Estrategia_165"), 
+        (estrategia_166, "Estrategia_166"), (estrategia_167, "Estrategia_167"), (estrategia_168, "Estrategia_168"), (estrategia_169, "Estrategia_169"), (estrategia_170, "Estrategia_170"), (estrategia_171, "Estrategia_171"), (estrategia_172, "Estrategia_172"), 
+        (estrategia_173, "Estrategia_173"), (estrategia_174, "Estrategia_174"), (estrategia_175, "Estrategia_175"), (estrategia_176, "Estrategia_176"), (estrategia_177, "Estrategia_177"), (estrategia_178, "Estrategia_178"), (estrategia_179, "Estrategia_179"), 
+        (estrategia_180, "Estrategia_180"), (estrategia_181, "Estrategia_181"), (estrategia_182, "Estrategia_182"), (estrategia_183, "Estrategia_183"), (estrategia_184, "Estrategia_184"), (estrategia_185, "Estrategia_185"), (estrategia_186, "Estrategia_186"), 
+        (estrategia_187, "Estrategia_187"), (estrategia_188, "Estrategia_188"), (estrategia_189, "Estrategia_189"), (estrategia_190, "Estrategia_190"), (estrategia_191, "Estrategia_191"), (estrategia_192, "Estrategia_192"), (estrategia_193, "Estrategia_193"), 
+        (estrategia_194, "Estrategia_194"), (estrategia_195, "Estrategia_195"), (estrategia_196, "Estrategia_196"), (estrategia_197, "Estrategia_197"), (estrategia_198, "Estrategia_198"), (estrategia_199, "Estrategia_199"), (estrategia_200, "Estrategia_200"), 
+        (estrategia_201, "Estrategia_201"), (estrategia_202, "Estrategia_202"), (estrategia_203, "Estrategia_203"), (estrategia_204, "Estrategia_204"), (estrategia_205, "Estrategia_205"), (estrategia_206, "Estrategia_206"), (estrategia_207, "Estrategia_207"), 
+        (estrategia_208, "Estrategia_208"), (estrategia_209, "Estrategia_209"), (estrategia_210, "Estrategia_210"), (estrategia_211, "Estrategia_211"), (estrategia_212, "Estrategia_212"), (estrategia_213, "Estrategia_213"), (estrategia_214, "Estrategia_214"), 
+        (estrategia_215, "Estrategia_215"), (estrategia_216, "Estrategia_216"),         (estrategia_217, "Estrategia_217"), (estrategia_218, "Estrategia_218"), (estrategia_219, "Estrategia_219"), (estrategia_220, "Estrategia_220"), 
+        (estrategia_221, "Estrategia_221"), (estrategia_222, "Estrategia_222"), (estrategia_223, "Estrategia_223"), (estrategia_224, "Estrategia_224"), 
+        (estrategia_225, "Estrategia_225"), (estrategia_226, "Estrategia_226"), (estrategia_227, "Estrategia_227"), (estrategia_228, "Estrategia_228")
+     
     ]
     strategy_map = {name: func for func, name in strategy_list}
     return strategy_list, strategy_map
 # --- Fim Definição das estratégias VAR ---
 
 # --- Título ---
-st.title("teste - Backtest Combinado: Filtro VAR + Lay Correct Score 99%")
+st.title("Estratégia Trading - Lay Correct Score 95% >>")
 
 # --- Carregar Histórico do GitHub ---
 st.header("Carregamento da Base Histórica")
