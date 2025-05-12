@@ -605,7 +605,7 @@ st.title("Teste 98% Handicap 3.5 e 4.5 -base365")
 # --- Carregar Histórico do GitHub ---
 st.header("Carregamento da Base Histórica")
 #github_raw_url = "https://raw.githubusercontent.com/81matheus/BasedeDadosBet365/main/pagesbet365/Base_de_Dados_Bet365_Filtrada_2025-05-12.xlsx"
-github_raw_url = "https://raw.githubusercontent.com/81matheus/BasedeDadosBet365/main/pagesbet365/Exel-Base_de_Dados_Bet365_FiltradaCompleta.xlsx
+github_raw_url = "https://raw.githubusercontent.com/81matheus/BasedeDadosBet365/main/pagesbet365/Exel-Base_de_Dados_Bet365_FiltradaCompleta.xlsx"
 with st.spinner("Buscando e carregando dados históricos do GitHub..."):
     df_historico_original = load_data_from_github(github_raw_url)
 
