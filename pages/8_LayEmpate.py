@@ -25,7 +25,8 @@ def obter_dados_github(file_path): # Função da API adaptada para Streamlit
     REPO = "FutPythonTrader"
     # ATENÇÃO: O token abaixo é o fornecido no exemplo.
     # Em um ambiente de produção, gerencie tokens de forma segura (ex: Streamlit secrets).
-    TOKEN = "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"
+    #TOKEN = "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"
+    TOKEN = "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"
 
     url = f"{GITHUB_API_URL}/{OWNER}/{REPO}/contents/{file_path}"
     headers = {"Authorization": f"token {TOKEN}"}
