@@ -12,7 +12,7 @@ GITHUB_API_URL = "https://api.github.com/repos"
 OWNER = "futpythontrader"
 REPO = "FutPythonTrader"
 # TOKEN = st.secrets["GITHUB_TOKEN"] # FORMA CORRETA
-TOKEN = "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" # Mantenha por agora, mas substitua
+TOKEN = "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" # Mantenha por agora, mas substitua
 
 # Função auxiliar da API original, mas não a chamaremos diretamente de obter_dados_github
 # para manter a lógica de tratamento de NaN do Streamlit.
