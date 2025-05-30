@@ -706,7 +706,85 @@ def define_var_strategies(vars_dict):
     def estrategia_303(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR61'] >= 0.1879) & (vars_dict['VAR61'] <= 0.2314)].copy()
     def estrategia_304(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR77'] >= 0.2515) & (vars_dict['VAR77'] <= 0.2948)].copy()
     #Empate Forte
-    
+    def estrategia_305(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR14'] >= 0.4934) & (vars_dict['VAR14'] <= 0.5925)].copy()
+    def estrategia_306(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR20'] >= 0.5382) & (vars_dict['VAR20'] <= 0.6461)].copy()
+    def estrategia_307(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR30'] >= 0.9686) & (vars_dict['VAR30'] <= 1.0833)].copy()
+    def estrategia_308(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR77'] >= 0.3169) & (vars_dict['VAR77'] <= 0.3613)].copy()
+    def estrategia_309(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR60'] >= 0.0376) & (vars_dict['VAR60'] <= 0.0481)].copy()
+    def estrategia_310(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR19'] >= 0.769) & (vars_dict['VAR19'] <= 0.8884)].copy()
+    def estrategia_311(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR25'] >= 1.5789) & (vars_dict['VAR25'] <= 1.7669)].copy()
+    def estrategia_312(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR76'] >= 0.0526) & (vars_dict['VAR76'] <= 0.0602)].copy()
+    def estrategia_313(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR26'] >= 1.4186) & (vars_dict['VAR26'] <= 1.4846)].copy()
+    def estrategia_314(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR13'] >= 0.8773) & (vars_dict['VAR13'] <= 1.0)].copy()
+    def estrategia_315(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR74'] >= 0.2569) & (vars_dict['VAR74'] <= 0.3022)].copy()
+    def estrategia_316(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR39'] >= 1.2353) & (vars_dict['VAR39'] <= 1.465)].copy()
+    def estrategia_317(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR49'] >= 0.7588) & (vars_dict['VAR49'] <= 0.8662)].copy()
+    def estrategia_318(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR47'] >= 1.1544) & (vars_dict['VAR47'] <= 1.3178)].copy()
+    def estrategia_319(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR69'] >= -5.3404) & (vars_dict['VAR69'] <= -2.8153)].copy()
+    def estrategia_320(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR06'] >= 1.4097) & (vars_dict['VAR06'] <= 1.561)].copy()
+    def estrategia_321(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR43'] >= 1.4706) & (vars_dict['VAR43'] <= 1.5254)].copy()
+    def estrategia_322(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR04'] >= 0.6406) & (vars_dict['VAR04'] <= 0.7094)].copy()
+    def estrategia_323(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR16'] >= 0.36) & (vars_dict['VAR16'] <= 0.4282)].copy()
+    def estrategia_324(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR15'] >= 0.5323) & (vars_dict['VAR15'] <= 0.5538)].copy()
+    def estrategia_325(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR40'] >= 1.7442) & (vars_dict['VAR40'] <= 1.92)].copy()
+    def estrategia_326(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR70'] >= 0.263) & (vars_dict['VAR70'] <= 0.3478)].copy()
+    def estrategia_327(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR32'] >= 1.6102) & (vars_dict['VAR32'] <= 1.6907)].copy()
+    def estrategia_328(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR68'] >= 0.6679) & (vars_dict['VAR68'] <= 1.3783)].copy()
+    def estrategia_329(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR48'] >= 1.031) & (vars_dict['VAR48'] <= 1.064)].copy()
+    def estrategia_330(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR31'] >= 1.7016) & (vars_dict['VAR31'] <= 1.8056)].copy()
+    def estrategia_331(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR07'] >= 0.75) & (vars_dict['VAR07'] <= 0.7767)].copy()
+    def estrategia_332(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR41'] >= 1.0) & (vars_dict['VAR41'] <= 1.1091)].copy()
+    def estrategia_333(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR62'] >= 2.7564) & (vars_dict['VAR62'] <= 5.3791)].copy()
+    def estrategia_334(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR05'] >= 1.2889) & (vars_dict['VAR05'] <= 1.6425)].copy()
+    def estrategia_335(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR02'] >= 0.6088) & (vars_dict['VAR02'] <= 0.7759)].copy()
+    def estrategia_336(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR01'] >= 0.9429) & (vars_dict['VAR01'] <= 1.1)].copy()
+    def estrategia_337(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR12'] >= 0.6515) & (vars_dict['VAR12'] <= 0.6708)].copy()
+    def estrategia_338(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR22'] >= 0.3844) & (vars_dict['VAR22'] <= 0.4615)].copy()
+    def estrategia_339(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR63'] >= -6.7724) & (vars_dict['VAR63'] <= -5.856)].copy()
+    def estrategia_340(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR65'] >= 3.0356) & (vars_dict['VAR65'] <= 3.8241)].copy()
+    def estrategia_341(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR38'] >= 1.9118) & (vars_dict['VAR38'] <= 2.0701)].copy()
+    def estrategia_342(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR58'] >= 0.032) & (vars_dict['VAR58'] <= 0.0427)].copy()
+    def estrategia_343(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR52'] >= 0.0296) & (vars_dict['VAR52'] <= 0.04)].copy()
+    def estrategia_344(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR03'] >= 0.7077) & (vars_dict['VAR03'] <= 0.7576)].copy()
+    def estrategia_345(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR71'] >= 0.0) & (vars_dict['VAR71'] <= 0.0725)].copy()
+    def estrategia_346(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR55'] >= 0.0) & (vars_dict['VAR55'] <= 0.0226)].copy()
+    def estrategia_347(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR73'] >= 0.0505) & (vars_dict['VAR73'] <= 0.0777)].copy()
+    def estrategia_348(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR23'] >= 2.2556) & (vars_dict['VAR23'] <= 2.6316)].copy()
+    def estrategia_349(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR36'] >= 1.2749) & (vars_dict['VAR36'] <= 1.3437)].copy()
+    def estrategia_350(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR46'] >= 0.6862) & (vars_dict['VAR46'] <= 0.7389)].copy()
+    def estrategia_351(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR66'] >= 4.0586) & (vars_dict['VAR66'] <= 13.3633)].copy()
+    def estrategia_352(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR08'] >= 1.2176) & (vars_dict['VAR08'] <= 1.2874)].copy()
+    def estrategia_353(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR27'] >= 1.3158) & (vars_dict['VAR27'] <= 1.374)].copy()
+    def estrategia_354(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR64'] >= 3.636) & (vars_dict['VAR64'] <= 4.9483)].copy()
+    def estrategia_355(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR45'] >= 0.908) & (vars_dict['VAR45'] <= 0.9398)].copy()
+    def estrategia_356(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR29'] >= 1.5038) & (vars_dict['VAR29'] <= 1.5789)].copy()
+    def estrategia_357(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR57'] >= 0.112) & (vars_dict['VAR57'] <= 0.1337)].copy()
+    def estrategia_358(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR09'] >= 1.1561) & (vars_dict['VAR09'] <= 1.2575)].copy()
+    def estrategia_359(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR75'] >= 0.0) & (vars_dict['VAR75'] <= 0.0231)].copy()
+    def estrategia_360(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR18'] >= 0.5788) & (vars_dict['VAR18'] <= 0.5938)].copy()
+    def estrategia_361(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR10'] >= 1.2937) & (vars_dict['VAR10'] <= 2.6154)].copy()
+    def estrategia_362(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR56'] >= 0.0384) & (vars_dict['VAR56'] <= 0.0515)].copy()
+    def estrategia_363(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR51'] >= 0.1053) & (vars_dict['VAR51'] <= 0.1257)].copy()
+    def estrategia_364(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR37'] >= 1.5691) & (vars_dict['VAR37'] <= 1.6102)].copy()
+    def estrategia_365(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR59'] >= 0.0) & (vars_dict['VAR59'] <= 0.0174)].copy()
+    def estrategia_366(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR42'] >= 1.56) & (vars_dict['VAR42'] <= 1.7265)].copy()
+    def estrategia_367(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR28'] >= 1.3008) & (vars_dict['VAR28'] <= 1.3534)].copy()
+    def estrategia_368(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR34'] >= 0.9162) & (vars_dict['VAR34'] <= 0.9956)].copy()
+    def estrategia_369(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR33'] >= 1.2565) & (vars_dict['VAR33'] <= 1.3056)].copy()
+    def estrategia_370(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR61'] >= 0.1573) & (vars_dict['VAR61'] <= 0.1912)].copy()
+    def estrategia_371(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR21'] >= 0.4) & (vars_dict['VAR21'] <= 0.5)].copy()
+    def estrategia_372(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR72'] >= 0.4242) & (vars_dict['VAR72'] <= 1.3077)].copy()
+    def estrategia_373(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR67'] >= -0.6578) & (vars_dict['VAR67'] <= 0.4971)].copy()
+    def estrategia_374(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR53'] >= 0.1076) & (vars_dict['VAR53'] <= 0.1236)].copy()
+    def estrategia_375(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR11'] >= 1.1026) & (vars_dict['VAR11'] <= 1.2325)].copy()
+    def estrategia_376(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR44'] >= 0.9774) & (vars_dict['VAR44'] <= 1.0308)].copy()
+    def estrategia_377(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR50'] >= 0.3875) & (vars_dict['VAR50'] <= 0.5776)].copy()
+    def estrategia_378(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR54'] >= 0.0996) & (vars_dict['VAR54'] <= 0.1319)].copy()
+    def estrategia_379(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR35'] >= 1.0909) & (vars_dict['VAR35'] <= 1.1146)].copy()
+    def estrategia_380(df): return df[(vars_dict['VAR29'] >= 0.8693) & (vars_dict['VAR29'] <= 1.1929) & (vars_dict['VAR17'] >= 0.8976) & (vars_dict['VAR17'] <= 0.9843)].copy()
+
+
+
      # --- Lista de estratégias ---
     strategy_list = [
         (estrategia_1, "Estrategia_1"), (estrategia_2, "Estrategia_2"), (estrategia_3, "Estrategia_3"),
@@ -745,7 +823,40 @@ def define_var_strategies(vars_dict):
         (estrategia_129, "Estrategia_129"), (estrategia_130, "Estrategia_130"), (estrategia_131, "Estrategia_131"), (estrategia_132, "Estrategia_132"), (estrategia_133, "Estrategia_133"), (estrategia_134, "Estrategia_134"), (estrategia_135, "Estrategia_135"),
         (estrategia_136, "Estrategia_136"), (estrategia_137, "Estrategia_137"), (estrategia_138, "Estrategia_138"), (estrategia_139, "Estrategia_139"), (estrategia_140, "Estrategia_140"), (estrategia_141, "Estrategia_141"), (estrategia_142, "Estrategia_142"),
         (estrategia_143, "Estrategia_143"), (estrategia_144, "Estrategia_144"), (estrategia_145, "Estrategia_145"), (estrategia_146, "Estrategia_146"), (estrategia_147, "Estrategia_147"), (estrategia_148, "Estrategia_148"),
-        (estrategia_149, "Estrategia_149"), (estrategia_150, "Estrategia_150"), (estrategia_151, "Estrategia_151"), (estrategia_152, "Estrategia_152")
+        (estrategia_149, "Estrategia_149"), (estrategia_150, "Estrategia_150"), (estrategia_151, "Estrategia_151"), (estrategia_152, "Estrategia_152"), (estrategia_153, "Estrategia_153"), (estrategia_154, "Estrategia_154"), (estrategia_155, "Estrategia_155"), (estrategia_156, "Estrategia_156"), (estrategia_157, "Estrategia_157"), (estrategia_158, "Estrategia_158"), 
+        (estrategia_159, "Estrategia_159"), (estrategia_160, "Estrategia_160"), (estrategia_161, "Estrategia_161"), (estrategia_162, "Estrategia_162"), (estrategia_163, "Estrategia_163"), (estrategia_164, "Estrategia_164"), (estrategia_165, "Estrategia_165"), 
+        (estrategia_166, "Estrategia_166"), (estrategia_167, "Estrategia_167"), (estrategia_168, "Estrategia_168"), (estrategia_169, "Estrategia_169"), (estrategia_170, "Estrategia_170"), (estrategia_171, "Estrategia_171"), (estrategia_172, "Estrategia_172"), 
+        (estrategia_173, "Estrategia_173"), (estrategia_174, "Estrategia_174"), (estrategia_175, "Estrategia_175"), (estrategia_176, "Estrategia_176"), (estrategia_177, "Estrategia_177"), (estrategia_178, "Estrategia_178"), (estrategia_179, "Estrategia_179"), 
+        (estrategia_180, "Estrategia_180"), (estrategia_181, "Estrategia_181"), (estrategia_182, "Estrategia_182"), (estrategia_183, "Estrategia_183"), (estrategia_184, "Estrategia_184"), (estrategia_185, "Estrategia_185"), (estrategia_186, "Estrategia_186"), 
+        (estrategia_187, "Estrategia_187"), (estrategia_188, "Estrategia_188"), (estrategia_189, "Estrategia_189"), (estrategia_190, "Estrategia_190"), (estrategia_191, "Estrategia_191"), (estrategia_192, "Estrategia_192"), (estrategia_193, "Estrategia_193"), 
+        (estrategia_194, "Estrategia_194"), (estrategia_195, "Estrategia_195"), (estrategia_196, "Estrategia_196"), (estrategia_197, "Estrategia_197"), (estrategia_198, "Estrategia_198"), (estrategia_199, "Estrategia_199"), (estrategia_200, "Estrategia_200"), 
+        (estrategia_201, "Estrategia_201"), (estrategia_202, "Estrategia_202"), (estrategia_203, "Estrategia_203"), (estrategia_204, "Estrategia_204"), (estrategia_205, "Estrategia_205"), (estrategia_206, "Estrategia_206"), (estrategia_207, "Estrategia_207"), 
+        (estrategia_208, "Estrategia_208"), (estrategia_209, "Estrategia_209"), (estrategia_210, "Estrategia_210"), (estrategia_211, "Estrategia_211"), (estrategia_212, "Estrategia_212"), (estrategia_213, "Estrategia_213"), (estrategia_214, "Estrategia_214"), 
+        (estrategia_215, "Estrategia_215"), (estrategia_216, "Estrategia_216"),         (estrategia_217, "Estrategia_217"), (estrategia_218, "Estrategia_218"), (estrategia_219, "Estrategia_219"), (estrategia_220, "Estrategia_220"), 
+        (estrategia_221, "Estrategia_221"), (estrategia_222, "Estrategia_222"), (estrategia_223, "Estrategia_223"), (estrategia_224, "Estrategia_224"), 
+        (estrategia_225, "Estrategia_225"), (estrategia_226, "Estrategia_226"), (estrategia_227, "Estrategia_227"), (estrategia_228, "Estrategia_228"), 
+        (estrategia_229, "Estrategia_229"), (estrategia_230, "Estrategia_230"), (estrategia_231, "Estrategia_231"), (estrategia_232, "Estrategia_232"), 
+        (estrategia_233, "Estrategia_233"), (estrategia_234, "Estrategia_234"), (estrategia_235, "Estrategia_235"), (estrategia_236, "Estrategia_236"), 
+        (estrategia_237, "Estrategia_237"), (estrategia_238, "Estrategia_238"), (estrategia_239, "Estrategia_239"), (estrategia_240, "Estrategia_240"), 
+        (estrategia_241, "Estrategia_241"), (estrategia_242, "Estrategia_242"), (estrategia_243, "Estrategia_243"), (estrategia_244, "Estrategia_244"), 
+        (estrategia_245, "Estrategia_245"), (estrategia_246, "Estrategia_246"), (estrategia_247, "Estrategia_247"), (estrategia_248, "Estrategia_248"), 
+        (estrategia_249, "Estrategia_249"), (estrategia_250, "Estrategia_250"), (estrategia_251, "Estrategia_251"), (estrategia_252, "Estrategia_252"), 
+        (estrategia_253, "Estrategia_253"), (estrategia_254, "Estrategia_254"), (estrategia_255, "Estrategia_255"), (estrategia_256, "Estrategia_256"), 
+        (estrategia_257, "Estrategia_257"), (estrategia_258, "Estrategia_258"), (estrategia_259, "Estrategia_259"), (estrategia_260, "Estrategia_260"), 
+        (estrategia_261, "Estrategia_261"), (estrategia_262, "Estrategia_262"),         (estrategia_263, "Estrategia_263"), (estrategia_264, "Estrategia_264"), (estrategia_265, "Estrategia_265"), (estrategia_266, "Estrategia_266"), 
+        (estrategia_267, "Estrategia_267"), (estrategia_268, "Estrategia_268"), (estrategia_269, "Estrategia_269"), (estrategia_270, "Estrategia_270"), 
+        (estrategia_271, "Estrategia_271"), (estrategia_272, "Estrategia_272"), (estrategia_273, "Estrategia_273"), (estrategia_274, "Estrategia_274"), 
+        (estrategia_275, "Estrategia_275"), (estrategia_276, "Estrategia_276"), (estrategia_277, "Estrategia_277"), (estrategia_278, "Estrategia_278"), 
+        (estrategia_279, "Estrategia_279"), (estrategia_280, "Estrategia_280"), (estrategia_281, "Estrategia_281"), (estrategia_282, "Estrategia_282"), 
+        (estrategia_283, "Estrategia_283"), (estrategia_284, "Estrategia_284"), (estrategia_285, "Estrategia_285"), (estrategia_286, "Estrategia_286"), 
+        (estrategia_287, "Estrategia_287"), (estrategia_288, "Estrategia_288"), (estrategia_289, "Estrategia_289"), (estrategia_290, "Estrategia_290"), 
+        (estrategia_291, "Estrategia_291"), (estrategia_292, "Estrategia_292"), (estrategia_293, "Estrategia_293"), (estrategia_294, "Estrategia_294"), 
+        (estrategia_295, "Estrategia_295"), (estrategia_296, "Estrategia_296"), (estrategia_297, "Estrategia_297"), (estrategia_298, "Estrategia_298"), 
+        (estrategia_299, "Estrategia_299"), (estrategia_300, "Estrategia_300"), (estrategia_301, "Estrategia_301"), (estrategia_302, "Estrategia_302"), 
+        (estrategia_303, "Estrategia_303"), (estrategia_304, "Estrategia_304"), (estrategia_305, "Estrategia_305"), (estrategia_306, "Estrategia_306"), 
+        (estrategia_307, "Estrategia_307"), (estrategia_308, "Estrategia_308")
+
+
              
 
     ]
