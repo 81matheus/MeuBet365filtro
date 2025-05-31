@@ -118,7 +118,9 @@ def get_team_history(df_all_matches, team_name, current_match_date, num_matches)
 
 def engineer_historical_features_expanded(df_input, max_lookback=10):
     if df_input is None or df_input.empty:
-        return pd.DataFrame() # Retorna DF vazio se entrada for None ou vazia
+        st.warning("DataFrame de entrada para engenharia de features está vazio. Nenhuma feature será calculada.")
+        return pd.DataFrame() # Retorna um DataFrame vazio para evitar erros subsequentes
+
     df = df_input.copy() # Trabalhar com uma cópia
     st.info(f"Iniciando engenharia de features para {len(df)} jogos (max_lookback={max_lookback})...")
     
@@ -132,11 +134,23 @@ def engineer_historical_features_expanded(df_input, max_lookback=10):
             for col_name, init_val_scalar in agg_cols_to_init.items():
                 df[f'{team_prefix}_Last{n_val}_{col_name}'] = init_val_scalar
 
-    total_rows = len(df)
+     total_rows = len(df)
+    # Adicionar verificação de total_rows antes de criar a barra de progresso e iterar
+    if total_rows == 0:
+        st.warning("DataFrame tem 0 linhas após a cópia. Nenhuma feature será calculada.")
+        progress_bar_features.empty() # Limpa a barra se ela foi criada antes e o df ficou vazio
+        return df # Retorna o DataFrame (agora vazio ou como estava)
+
     progress_bar_features = st.progress(0)
     for index, row in df.iterrows():
-        if (index + 1) % (total_rows // 20 or 1) == 0 or index == total_rows - 1: # Atualiza a cada 5% ou na última linha
-            progress_bar_features.progress( (index + 1) / total_rows )
+        # Sua lógica de atualização da barra de progresso
+        # Garantir que total_rows é > 0 aqui por segurança, embora a verificação acima deva cobrir
+        if total_rows > 0:
+            progress_value = min(1.0, (float(index) + 1.0) / float(total_rows)) # Força float e limita a 1.0
+            progress_bar_features.progress(progress_value)
+        else:
+            # Isso não deveria acontecer se a checagem anterior de total_rows funcionou
+            pass
 
         for team_prefix, team_name_col in [('H', 'Home'), ('A', 'Away')]:
             team_name = row[team_name_col]
@@ -163,7 +177,7 @@ def engineer_historical_features_expanded(df_input, max_lookback=10):
                     df.at[index, f'{team_prefix}_Last{n_val_loop}_TotalBTTS_Y'] = sum(df.at[index, f'{team_prefix}_Last{n_val_loop}_BTTS_Y_List'])
                     df.at[index, f'{team_prefix}_Last{n_val_loop}_TotalGD'] = sum(df.at[index, f'{team_prefix}_Last{n_val_loop}_GD'])
                     df.at[index, f'{team_prefix}_Last{n_val_loop}_NoScoreCount'] = sum(1 for g in gf_l if g == 0)
-    progress_bar_features.empty()
+    progress_bar_features.empty() # Limpa a barra ao final
     st.success("Engenharia de features concluída.")
     return df
 
