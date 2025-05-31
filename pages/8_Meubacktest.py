@@ -66,26 +66,26 @@ def load_data(url):
         df['Date'] = pd.to_datetime(df['Date'])
         
         def parse_goal_minutes(minute_str):
-    if pd.isna(minute_str) or not isinstance(minute_str, str) or minute_str.strip() == "":
-        return []
-    try:
-        parsed_list = ast.literal_eval(minute_str)
-        if not isinstance(parsed_list, list): # Adiciona uma checagem para garantir que é uma lista
+            if pd.isna(minute_str) or not isinstance(minute_str, str) or minute_str.strip() == "":
             return []
+            try:
+        parsed_list = ast.literal_eval(minute_str)
+            if not isinstance(parsed_list, list): # Adiciona uma checagem para garantir que é uma lista
+                return []
         
         # Tenta converter cada item para int, pulando se não for possível
         processed_list = []
-        for item in parsed_list:
+            for item in parsed_list:
             try:
                 processed_list.append(int(item)) # Converte cada item para inteiro
             except (ValueError, TypeError):
                 # Opcional: logar um aviso se um item não puder ser convertido
                 # st.warning(f"Não foi possível converter o item '{item}' para inteiro nos minutos de gol.")
                 pass # Pula itens não conversíveis
-        return processed_list
-    except (ValueError, SyntaxError):
+                return processed_list
+            except (ValueError, SyntaxError):
         # st.warning(f"Erro ao fazer parsing da string de minutos de gol: {minute_str}")
-        return []
+                return []
 
         df['Goals_Min_H_Parsed'] = df['Goals_Min_H'].apply(parse_goal_minutes)
         df['Goals_Min_A_Parsed'] = df['Goals_Min_A'].apply(parse_goal_minutes)
