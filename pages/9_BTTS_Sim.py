@@ -318,8 +318,9 @@ if page == "Estratégias":
                         if not (min_win_rate_away <= win_rate_away_actual <= max_win_rate_away): continue
                         
                         # Goal Timing
+                                                # Goal Timing
                         if not check_goal_timing(game, minute_goal_before, minute_goal_after, 
-                                                 timing_team_scope, apply_goal_before, apply_after_filter):
+                                                 timing_team_scope, apply_goal_before, apply_goal_after): # <--- CORRECTED HERE
                             continue
                         
                         # --- Selected Bet Odds Filter ---
