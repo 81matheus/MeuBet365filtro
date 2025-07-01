@@ -293,38 +293,6 @@ else:
         
         st.success(f"Análise concluída! {len(df_matched)} jogos encontrados que correspondem à sua estratégia.")
 
-        if not df_matched.empty:
-            # --- <NOVO> Executa a função de backtest e obtém os resultados ---
-            df_results, metrics = run_backtest(df_matched, selected_odd_column_name, selected_bet_key)
-
-            # --- <NOVO> Exibição dos KPIs ---
-            st.header("📈 Resultados do Backtest")
-            col1, col2, col3, col4 = st.columns(4)
-            col1.metric("Total de Apostas", f"{metrics['total_bets']}", help="Número de jogos que corresponderam aos filtros.")
-            col2.metric("Taxa de Acerto", f"{metrics['win_rate']:.2f}%", help="Percentual de apostas vencedoras.")
-            col3.metric("Lucro/Prejuízo Líquido", f"{metrics['net_profit']:.2f} un.", help="Lucro total em unidades (stake de 1 un. por aposta).")
-            col4.metric("ROI (Retorno s/ Invest.)", f"{metrics['roi']:.2f}%", "Lucro líquido / Total apostado. A métrica chave de eficiência.",
-                        delta_color=("inverse" if metrics['roi'] < 0 else "normal"))
-
-            c1, c2 = st.columns(2)
-            c1.metric("Odd Média da Estratégia", f"{metrics['avg_odd']:.2f}")
-            c2.metric("Odd Média das Vitórias", f"{metrics['avg_win_odd']:.2f}")
-            
-            # --- <NOVO> Gráfico de Lucro Cumulativo ---
-            st.subheader("Evolução do Lucro (Bankroll)")
-            st.line_chart(df_results, x='Date', y='Cumulative_Profit')
-
-            # --- Tabela com os jogos ---
-            with st.expander("Ver todos os jogos analisados no backtest"):
-                st.dataframe(df_results, use_container_width=True)
-
-        else:
-            st.info("Nenhum jogo encontrado com os critérios definidos. Tente filtros mais flexíveis.")
-    else:
-        st.info("Configure os filtros na barra lateral e clique em 'Executar Backtest' para começar.")
-        if not df_original.empty:
-            st.write("Amostra da base de dados carregada:")
-            st.dataframe(df_original.head())
         # ... (continuação do `if run_analysis:`)
 
         if not df_matched.empty:
@@ -385,4 +353,10 @@ else:
                 st.dataframe(df_results, use_container_width=True)
 
         else:
-            st.info("Nenhum jogo encontrado com os critérios definidos. Tente filtros mais flexíveis.")    
+            st.info("Nenhum jogo encontrado com os critérios definidos. Tente filtros mais flexíveis.") 
+    else:
+        st.info("Configure os filtros na barra lateral e clique em 'Executar Backtest' para começar.")
+        if not df_original.empty:
+            st.write("Amostra da base de dados carregada:")
+            st.dataframe(df_original.head())
+   
