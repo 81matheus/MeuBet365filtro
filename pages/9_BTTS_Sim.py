@@ -10,43 +10,55 @@ st.set_page_config(layout="wide", page_title="Dashboard de Análise de Apostas")
 
 # --- Funções de Processamento de Dados ---
 
-def parse_combined_score(score_str):
-    """Extrai placares HT e FT de uma string como '1-0 2-1'."""
-    if not isinstance(score_str, str):
-        return [np.nan] * 4
-    
-    parts = score_str.replace(' ', '-').split('-')
-    if len(parts) == 4 and all(p.isdigit() for p in parts):
-        return [int(p) for p in parts]
-    
-    match = re.match(r'(\d+)-(\d+)\s+(\d+)-(\d+)', score_str)
-    if match:
-        return [int(g) for g in match.groups()]
-    
-    match_ft_only = re.match(r'(\d+)-(\d+)', score_str)
-    if match_ft_only:
-        return [np.nan, np.nan, int(match_ft_only.group(1)), int(match_ft_only.group(2))]
-        
-    return [np.nan] * 4
-
 @st.cache_data
 def preprocess_user_data(df):
-    """Processa a planilha do usuário para criar uma base de dados estruturada."""
+    """
+    Processa a planilha do usuário, adaptando-se a diferentes formatos de dados (colunas de placar separadas ou combinadas).
+    """
     try:
-        original_cols = df.columns.tolist()
-        score_col = next((col for col in original_cols if df[col].astype(str).str.match(r'^\d+-\d+(\s+\d+-\d+)?$').any()), None)
-        
-        if not score_col:
-            st.error("Não foi possível encontrar uma coluna com placares (ex: '1-0' ou '1-0 2-1'). Verifique sua planilha.")
-            return pd.DataFrame()
+        # 1. Normaliza cabeçalhos para maiúsculas e sem espaços
+        df.columns = [str(col).strip().upper() for col in df.columns]
 
-        scores = df[score_col].apply(parse_combined_score)
-        df[['GOALS_H_HT', 'GOALS_A_HT', 'GOALS_H_FT', 'GOALS_A_FT']] = pd.DataFrame(scores.tolist(), index=df.index)
-
-        df.columns = [str(col).strip().upper() for col in original_cols]
+        # 2. Renomeia colunas comuns para um padrão interno
         rename_map = {'EQUIPA CASA': 'HOME', 'EQUIPA VISITANTE': 'AWAY'}
         df = df.rename(columns=rename_map)
+
+        # --- LÓGICA INTELIGENTE PARA DETECTAR O FORMATO DO PLACAR ---
+        clean_ft_cols = ['RESULTADO FT CASA', 'RESULTADO FT FORA']
         
+        # CENÁRIO A: Colunas de placar já estão limpas e separadas
+        if all(col in df.columns for col in clean_ft_cols):
+            st.info("Formato de planilha com colunas de placar separadas detectado. Processando...")
+            # Renomeia para o padrão interno
+            df = df.rename(columns={
+                'RESULTADO HT CASA': 'GOALS_H_HT', 'RESULTADO HT FORA': 'GOALS_A_HT',
+                'RESULTADO FT CASA': 'GOALS_H_FT', 'RESULTADO FT FORA': 'GOALS_A_FT'
+            })
+            # Garante que, se as colunas de HT não existirem, elas sejam criadas com 0
+            if 'GOALS_H_HT' not in df.columns: df['GOALS_H_HT'] = 0
+            if 'GOALS_A_HT' not in df.columns: df['GOALS_A_HT'] = 0
+
+        # CENÁRIO B: Procura por uma coluna de placar combinado (formato "bagunçado")
+        else:
+            st.info("Tentando encontrar uma coluna de placar combinado (ex: '1-0 2-1')...")
+            score_col_name = next((col for col in df.columns if df[col].astype(str).str.match(r'^\d+-\d+(\s+\d+-\d+)?$').any()), None)
+            
+            if not score_col_name:
+                st.error("Não foi possível encontrar colunas de placar. Formatos esperados: colunas separadas ('RESULTADO FT CASA', 'RESULTADO FT FORA') OU uma única coluna com texto de placar (ex: '1-0' ou '1-0 2-1').")
+                return pd.DataFrame()
+
+            def parse_combined_score(score_str):
+                if not isinstance(score_str, str): return [np.nan] * 4
+                match = re.match(r'(\d+)-(\d+)\s+(\d+)-(\d+)', score_str)
+                if match: return [int(g) for g in match.groups()]
+                match_ft_only = re.match(r'(\d+)-(\d+)', score_str)
+                if match_ft_only: return [0, 0, int(match_ft_only.group(1)), int(match_ft_only.group(2))]
+                return [0, 0, 0, 0]
+
+            scores = df[score_col_name].apply(parse_combined_score)
+            df[['GOALS_H_HT', 'GOALS_A_HT', 'GOALS_H_FT', 'GOALS_A_FT']] = pd.DataFrame(scores.tolist(), index=df.index)
+
+        # 3. Limpeza e conversão final das colunas
         for col in ['HOME', 'AWAY', 'LIGA']:
             if col not in df.columns: df[col] = 'N/A'
         
@@ -57,12 +69,12 @@ def preprocess_user_data(df):
             if isinstance(date_val, (int, float)):
                 try: return pd.to_datetime('1899-12-30') + pd.to_timedelta(date_val, 'D')
                 except: return pd.NaT
-            try: return pd.to_datetime(date_val, dayfirst=True)
+            try: return pd.to_datetime(date_val, dayfirst=True, errors='coerce')
             except (ValueError, TypeError): return pd.NaT
         df['DATE'] = df['DATA'].apply(robust_date_parser)
         df = df.dropna(subset=['DATE']).sort_values(by='DATE').reset_index(drop=True)
 
-        # DERIVAÇÃO DE MERCADOS
+        # 4. DERIVAÇÃO DE MERCADOS (a partir dos dados já limpos)
         df['TOTAL_GOALS_FT'] = df['GOALS_H_FT'] + df['GOALS_A_FT']
         df['TOTAL_GOALS_HT'] = df['GOALS_H_HT'] + df['GOALS_A_HT']
         df['GOALS_2T'] = df['TOTAL_GOALS_FT'] - df['TOTAL_GOALS_HT']
@@ -86,10 +98,10 @@ def preprocess_user_data(df):
         st.success("Planilha processada com sucesso!")
         return df
     except Exception as e:
-        st.error(f"Ocorreu um erro ao processar sua planilha: {e}. Verifique se a estrutura dos dados está correta.")
+        st.error(f"Ocorreu um erro crítico ao processar sua planilha: {e}. Verifique se o arquivo não está corrompido.")
         return pd.DataFrame()
 
-# --- Funções de Análise ---
+# --- Funções de Análise (mesmas da versão anterior) ---
 def create_correct_score_matrix(df):
     if df.empty: return None
     cs_crosstab = pd.crosstab(df['GOALS_H_FT'], df['GOALS_A_FT'])
@@ -151,8 +163,13 @@ if 'df' not in st.session_state:
 if uploaded_file is not None:
     with st.spinner("Lendo e processando sua planilha..."):
         engine = 'openpyxl' if uploaded_file.name.endswith('xlsx') else 'xlrd'
-        df_user = pd.read_excel(uploaded_file, engine=engine)
-        st.session_state.df = preprocess_user_data(df_user)
+        try:
+            df_user = pd.read_excel(uploaded_file, engine=engine)
+            st.session_state.df = preprocess_user_data(df_user)
+        except Exception as e:
+            st.error(f"Não foi possível ler o arquivo. Pode estar corrompido ou num formato inesperado. Erro: {e}")
+            st.session_state.df = pd.DataFrame()
+
 
 if not st.session_state.df.empty:
     df = st.session_state.df
@@ -177,7 +194,6 @@ if not st.session_state.df.empty:
             'Menos de 1,5 HT', 'Menos de 1,5', 'Menos de 2,5', 'Menos de 3,5', 'Menos de 4,5', 'Menos de 6,5'
         ]
         
-        # Mapeamento do nome de exibição para a coluna no DataFrame
         column_map = {
             'Vitórias equipa Casa': 'CASA', 'Empates': 'EMPATE', 'Vitórias equipa Fora': 'VISITANTE'
         }
@@ -186,7 +202,6 @@ if not st.session_state.df.empty:
         cols = [col1, col2, col3]
         
         for i, market_name in enumerate(markets_to_display):
-            # Obtém o nome da coluna correto do DataFrame
             df_col_name = column_map.get(market_name, market_name)
             
             if df_col_name in filtered_df.columns:
@@ -209,10 +224,10 @@ if not st.session_state.df.empty:
 
         st.markdown("---")
         
-        st.subheader("Cenário: Jogo Empatado COM GOLS no Intervalo")
+        st.subheader("Cenário: Jogo Empatado COM GOLS no Intervalo (1x1, 2x2, etc.)")
         if 'tied_with_goals_at_ht' in scenarios:
             scenario = scenarios['tied_with_goals_at_ht']
-            st.info(f"Análise baseada em **{scenario['total_cases']}** jogos que estavam empatados com gols (1x1, 2x2, etc.) no HT.")
+            st.info(f"Análise baseada em **{scenario['total_cases']}** jogos que estavam empatados com gols no HT.")
             
             c1, c2, c3 = st.columns(3)
             c1.metric("2º Tempo > 0.5 Gols", f"{scenario['over_05_2T_rate']:.2f}%", help="Percentagem de jogos que tiveram pelo menos 1 gol no 2º tempo.")
@@ -222,7 +237,6 @@ if not st.session_state.df.empty:
             c4, c5 = st.columns(2)
             c4.metric("Jogo < 4.5 Gols (Total)", f"{scenario['under_45_FT_rate']:.2f}%", help="Percentagem de jogos que terminaram com menos de 5 gols no total.")
             c5.metric("Jogo < 6.5 Gols (Total)", f"{scenario['under_65_FT_rate']:.2f}%", help="Percentagem de jogos que terminaram com menos de 7 gols no total.")
-
         else:
             st.info("Não há jogos empatados com gols no intervalo para analisar.")
             
