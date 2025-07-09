@@ -1,368 +1,266 @@
 import streamlit as st
 import pandas as pd
-import requests
 import io
-import ast
 import re
 import numpy as np
+import plotly.express as px
 
 # --- Configuração da Página ---
-st.set_page_config(layout="wide", page_title="BetAnalyzer Pro - Análise e Backtesting")
+st.set_page_config(layout="wide", page_title="BetAnalyzer Pro - Análise de Dados")
 
-# --- Mapeamento de Mercados e Odds (para a base de dados padrão) ---
-# Este mapeamento é usado principalmente com a base de dados do GitHub, que tem odds detalhadas.
-# A ferramenta se adaptará se a planilha do usuário não tiver todas essas colunas.
-MARKET_TO_ODDS_MAPPING = {
-    "Resultado Final (1X2 FT)": {
-        "Vitória Casa (FT)": "Odd_H_FT", "Empate (FT)": "Odd_D_FT", "Vitória Visitante (FT)": "Odd_A_FT",
-    },
-    "Mais/Menos Gols (FT)": {
-        "Mais de 0.5 Gols FT": "Odd_Over05_FT", "Menos de 0.5 Gols FT": "Odd_Under05_FT",
-        "Mais de 1.5 Gols FT": "Odd_Over15_FT", "Menos de 1.5 Gols FT": "Odd_Under15_FT",
-        "Mais de 2.5 Gols FT": "Odd_Over25_FT", "Menos de 2.5 Gols FT": "Odd_Under25_FT",
-        "Mais de 3.5 Gols FT": "Odd_Over35_FT", "Menos de 3.5 Gols FT": "Odd_Under35_FT",
-        "Mais de 4.5 Gols FT": "Odd_Over45_FT", "Menos de 4.5 Gols FT": "Odd_Under45_FT",
-    },
-    "Ambas Marcam (BTTS)": {
-        "Sim (BTTS Yes)": "Odd_BTTS_Yes", "Não (BTTS No)": "Odd_BTTS_No",
-    }
-}
-# Lista simplificada para a planilha do usuário, que será preenchida dinamicamente
-SIMPLE_MARKET_LIST = ['CASA', 'EMPATE', 'VISITANTE', 'OVER 0.5HT', 'OVER 0.5FT', 'OVER 1.5FT', 'OVER 2.5FT', 'BTTS SIM']
+# --- Funções de Processamento de Dados ---
 
+def parse_combined_score(score_str):
+    """Extrai placares HT e FT de uma string como '1-0 2-1'."""
+    if not isinstance(score_str, str):
+        return [np.nan] * 4
+    
+    parts = score_str.replace(' ', '-').split('-')
+    if len(parts) == 4:
+        return [int(p) if p.isdigit() else np.nan for p in parts]
+    
+    # Tenta um regex mais robusto para '1-0 2-1' ou '1-0'
+    match = re.match(r'(\d+)-(\d+)\s+(\d+)-(\d+)', score_str)
+    if match:
+        return [int(g) for g in match.groups()]
+    
+    match_ft_only = re.match(r'(\d+)-(\d+)', score_str)
+    if match_ft_only:
+         # Se só temos FT, preenchemos HT com NaN para lidar depois
+        return [np.nan, np.nan, int(match_ft_only.group(1)), int(match_ft_only.group(2))]
+        
+    return [np.nan] * 4
 
-# --- Funções de Carregamento e Processamento de Dados ---
 
 @st.cache_data
-def load_default_data(url):
-    """Carrega a base de dados padrão do GitHub."""
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        excel_file = io.BytesIO(response.content)
-        df = pd.read_excel(excel_file)
-        # Processamento específico para a base padrão
-        df['Date'] = pd.to_datetime(df['Date'])
-        for col in df.columns:
-            if 'Odd' in col:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-            if 'Goals' in col and 'Min' not in col:
-                 df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
-        
-        def parse_goal_minutes(minute_str):
-            if pd.isna(minute_str) or not isinstance(minute_str, str) or minute_str.strip() == '[]': return []
-            try:
-                return [int(item) for item in ast.literal_eval(minute_str) if str(item).isdigit()]
-            except (ValueError, SyntaxError): return []
-        
-        df['Goals_Min_H_Parsed'] = df['Goals_Min_H'].apply(parse_goal_minutes)
-        df['Goals_Min_A_Parsed'] = df['Goals_Min_A'].apply(parse_goal_minutes)
-        df = df.sort_values(by='Date').reset_index(drop=True)
-        return df, True
-    except Exception as e:
-        st.error(f"Erro ao carregar a base de dados padrão: {e}")
-        return pd.DataFrame(), False
-
 def preprocess_user_data(df):
-    """Processa a planilha enviada pelo usuário para torná-la compatível."""
+    """Processa a planilha do usuário para criar uma base de dados estruturada."""
     try:
-        # 1. Normalizar nomes das colunas (MAIÚSCULAS, SEM ESPAÇOS, substitui 'RESULTAD' por 'RESULTADO')
-        # Esta é uma correção comum para colunas que são cortadas na exibição do Excel
-        df.columns = [str(col).strip().upper().replace('RESULTAD', 'RESULTADO') for col in df.columns]
+        original_cols = df.columns
+        # Usa regex para encontrar colunas com placares (HT e FT)
+        score_col = next((col for col in original_cols if re.search(r'\d+-\d+\s+\d+-\d+', str(df[col].iloc[0]))), None)
+        
+        # Se não encontrar, tenta encontrar apenas o placar FT
+        if not score_col:
+            score_col = next((col for col in original_cols if re.search(r'\d+-\d+', str(df[col].iloc[0]))), None)
+            if not score_col:
+                 st.error("Não foi possível encontrar uma coluna com o placar (ex: '1-0 2-1' ou '2-1').")
+                 return pd.DataFrame()
+        
+        # Extrai placares
+        scores = df[score_col].apply(parse_combined_score)
+        df[['GOALS_H_HT', 'GOALS_A_HT', 'GOALS_H_FT', 'GOALS_A_FT']] = pd.DataFrame(scores.tolist(), index=df.index)
 
-        # 2. Identificar e renomear colunas essenciais
+        # Identifica e renomeia outras colunas
+        df.columns = [str(col).strip().upper() for col in original_cols]
         rename_map = {
-            'EQUIPA CASA': 'HOME', 'EQUIPA VISITANTE': 'AWAY',
-            'RESULTADO HT CASA': 'GOALS_H_HT', 'RESULTADO HT FORA': 'GOALS_A_HT',
-            'RESULTADO FT CASA': 'GOALS_H_FT', 'RESULTADO FT FORA': 'GOALS_A_FT',
+            'EQUIPA CASA': 'HOME', 'EQUIPA VISITANTE': 'AWAY'
         }
         df = df.rename(columns=rename_map)
         
-        # 3. Converter colunas de gols para número
+        # Limpeza de colunas essenciais
+        for col in ['HOME', 'AWAY', 'LIGA']:
+            if col not in df.columns: df[col] = 'N/A'
+        
+        # Converte gols para número, preenchendo NaN com 0
         for col in ['GOALS_H_HT', 'GOALS_A_HT', 'GOALS_H_FT', 'GOALS_A_FT']:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
 
-        # 4. Criar colunas de resultados e totais
-        df['TOTAL_GOALS_FT'] = df['GOALS_H_FT'] + df['GOALS_A_FT']
-        df['TOTAL_GOALS_HT'] = df['GOALS_H_HT'] + df['GOALS_A_HT']
-        
-        # 5. DERIVAR as colunas de resultado (SIM/NÃO) se não existirem
-        if 'CASA' not in df.columns:
-            df['CASA'] = np.where(df['GOALS_H_FT'] > df['GOALS_A_FT'], 'SIM', 'NÃO')
-        if 'EMPATE' not in df.columns:
-            df['EMPATE'] = np.where(df['GOALS_H_FT'] == df['GOALS_A_FT'], 'SIM', 'NÃO')
-        if 'VISITANTE' not in df.columns:
-            df['VISITANTE'] = np.where(df['GOALS_H_FT'] < df['GOALS_A_FT'], 'SIM', 'NÃO')
-        if 'OVER 0.5HT' not in df.columns:
-            df['OVER 0.5HT'] = np.where(df['TOTAL_GOALS_HT'] > 0.5, 'SIM', 'NÃO')
-        if 'OVER 1.5FT' not in df.columns:
-            df['OVER 1.5FT'] = np.where(df['TOTAL_GOALS_FT'] > 1.5, 'SIM', 'NÃO')
-        if 'OVER 2.5FT' not in df.columns:
-            df['OVER 2.5FT'] = np.where(df['TOTAL_GOALS_FT'] > 2.5, 'SIM', 'NÃO')
-        if 'BTTS SIM' not in df.columns:
-            df['BTTS SIM'] = np.where((df['GOALS_H_FT'] > 0) & (df['GOALS_A_FT'] > 0), 'SIM', 'NÃO')
-        
-        # Garante que as colunas SIM/NÃO sejam string
-        for col in SIMPLE_MARKET_LIST:
-            if col in df.columns:
-                df[col] = df[col].astype(str)
-
-        # 6. DERIVAR as colunas de Correct Score (CS)
-        for h in range(6):
-            for a in range(6):
-                cs_col_name = f'CS {h}X{a}'
-                df[cs_col_name] = np.where((df['GOALS_H_FT'] == h) & (df['GOALS_A_FT'] == a), 'SIM', 'NÃO')
-
-        # 7. Limpar e converter ODD
-        if 'ODD' in df.columns:
-            df['ODD'] = pd.to_numeric(df['ODD'].astype(str).str.replace(',', '.'), errors='coerce')
-        else:
-            df['ODD'] = np.nan
-
-        # 8. Converter coluna de DATA
+        # Converte Data
         def robust_date_parser(date_val):
             if isinstance(date_val, (int, float)):
                 return pd.to_datetime('1899-12-30') + pd.to_timedelta(date_val, 'D')
-            try:
-                return pd.to_datetime(date_val)
-            except (ValueError, TypeError):
-                return pd.NaT
-
+            try: return pd.to_datetime(date_val, dayfirst=True)
+            except (ValueError, TypeError): return pd.NaT
         df['DATE'] = df['DATA'].apply(robust_date_parser)
         df = df.dropna(subset=['DATE']).sort_values(by='DATE').reset_index(drop=True)
 
+        # DERIVAÇÃO DE MERCADOS (A MÁGICA ACONTECE AQUI)
+        df['TOTAL_GOALS_FT'] = df['GOALS_H_FT'] + df['GOALS_A_FT']
+        df['TOTAL_GOALS_HT'] = df['GOALS_H_HT'] + df['GOALS_A_HT']
+        df['CASA'] = np.where(df['GOALS_H_FT'] > df['GOALS_A_FT'], 'SIM', 'NÃO')
+        df['EMPATE'] = np.where(df['GOALS_H_FT'] == df['GOALS_A_FT'], 'SIM', 'NÃO')
+        df['VISITANTE'] = np.where(df['GOALS_H_FT'] < df['GOALS_A_FT'], 'SIM', 'NÃO')
+        df['BTTS SIM'] = np.where((df['GOALS_H_FT'] > 0) & (df['GOALS_A_FT'] > 0), 'SIM', 'NÃO')
+        
+        # Adiciona múltiplos mercados Over/Under
+        for i in np.arange(0.5, 7.0, 1.0):
+            df[f'OVER {i}FT'] = np.where(df['TOTAL_GOALS_FT'] > i, 'SIM', 'NÃO')
+            df[f'UNDER {i}FT'] = np.where(df['TOTAL_GOALS_FT'] < i, 'SIM', 'NÃO')
+        for i in np.arange(0.5, 3.0, 1.0):
+            df[f'OVER {i}HT'] = np.where(df['TOTAL_GOALS_HT'] > i, 'SIM', 'NÃO')
+
         st.success("Planilha processada com sucesso!")
-        return df, True
-    except KeyError as e:
-        st.error(f"Erro ao processar sua planilha: Coluna essencial não encontrada -> {e}. Verifique se a planilha tem os cabeçalhos corretos na linha 4 (ex: 'DATA', 'EQUIPA CASA', 'RESULTADO FT CASA', etc.).")
-        return pd.DataFrame(), False
+        return df
     except Exception as e:
-        st.error(f"Ocorreu um erro inesperado: {e}")
-        return pd.DataFrame(), False
-
-
-# --- Funções de Análise (Backtesting, CS, Gols) ---
-def run_backtest_simple(df_filtered, selected_strategy):
-    """Executa um backtest simples para planilhas de usuário."""
-    if df_filtered.empty:
-        return pd.DataFrame(), {}
-
-    results = []
-    for _, game in df_filtered.iterrows():
-        outcome = game.get(selected_strategy, 'NÃO').upper()
-        odd = game.get('ODD', 1.0) 
-        profit = (odd - 1) if outcome == 'SIM' and not pd.isna(odd) else -1.0 if not pd.isna(odd) else 0.0
-        
-        results.append({
-            'Data': game['DATE'],
-            'Liga': game.get('LIGA', 'N/A'),
-            'Jogo': f"{game.get('HOME', 'N/A')} vs {game.get('AWAY', 'N/A')}",
-            'Placar': f"{game['GOALS_H_FT']}-{game['GOALS_A_FT']}",
-            'Aposta': selected_strategy,
-            'Odd': odd,
-            'Resultado': 'WIN' if outcome == 'SIM' else 'LOSS',
-            'Lucro': profit
-        })
-    df_results = pd.DataFrame(results)
-    if df_results.empty: return pd.DataFrame(), {}
-
-    df_results['Lucro Acumulado'] = df_results['Lucro'].cumsum()
-    
-    total_bets = len(df_results)
-    wins = len(df_results[df_results['Resultado'] == 'WIN'])
-    win_rate = (wins / total_bets) * 100 if total_bets > 0 else 0
-    net_profit = df_results['Lucro'].sum()
-    roi = (net_profit / total_bets) * 100 if total_bets > 0 and total_bets > df_results['Odd'].isna().sum() else 0
-    
-    metrics = {"total_bets": total_bets, "win_rate": win_rate, "net_profit": net_profit, "roi": roi}
-    return df_results, metrics
-
-def analyze_correct_score(df_filtered):
-    """Analisa o desempenho das apostas de Placar Exato."""
-    cs_cols = [col for col in df_filtered.columns if col.startswith('CS ')]
-    if not cs_cols:
-        cs_cols = [col for col in df_filtered.columns if col.startswith('CS ')] # Tentativa com variação
-    if not cs_cols:
+        st.error(f"Ocorreu um erro ao processar sua planilha: {e}. Verifique se a estrutura dos dados está correta.")
         return pd.DataFrame()
 
-    summary = []
-    for cs_col in cs_cols:
-        wins = df_filtered[df_filtered[cs_col] == 'SIM'].shape[0]
-        if wins > 0:
-            summary.append({
-                'Placar Exato': cs_col.replace('CS ', '').replace('X', 'x'),
-                'Ocorrências': wins,
-                'Frequência (%)': (wins / len(df_filtered)) * 100
-            })
-    
-    if not summary:
-        return pd.DataFrame()
+# --- Funções de Análise ---
 
-    df_summary = pd.DataFrame(summary).sort_values(by='Ocorrências', ascending=False)
-    return df_summary
+def create_correct_score_matrix(df):
+    """Cria uma matriz de calor para a frequência de placares exatos."""
+    if df.empty: return None
+    cs_crosstab = pd.crosstab(df['GOALS_H_FT'], df['GOALS_A_FT'])
+    # Reindex para garantir uma matriz de tamanho razoável (0-5 gols)
+    max_goals = max(cs_crosstab.index.max(), cs_crosstab.columns.max(), 5)
+    all_indices = np.arange(0, max_goals + 1)
+    cs_crosstab = cs_crosstab.reindex(index=all_indices, columns=all_indices, fill_value=0)
+    
+    fig = px.imshow(cs_crosstab,
+                    labels=dict(x="Gols Visitante", y="Gols Casa", color="Nº de Jogos"),
+                    x=cs_crosstab.columns, y=cs_crosstab.index,
+                    text_auto=True, aspect="auto", color_continuous_scale='Blues')
+    fig.update_layout(title_text='Mapa de Calor de Placares Exatos (Correct Score)', title_x=0.5)
+    return fig
 
-def analyze_goal_timing(df_filtered):
-    """Analisa quando e quem marcou o primeiro gol."""
-    if 'PRIMEIRO GOLO' not in df_filtered.columns:
-        return None, None
-        
-    casa_primeiro = 0
-    visitante_primeiro = 0
-    sem_gols_info = 0
+def analyze_scenario_tied_at_minute(df, minute_mark):
+    """Analisa jogos que estavam empatados em um determinado minuto."""
+    if 'PRIMEIRO GOLO' not in df.columns: return None
     
-    bins = {'0-15': 0, '16-30': 0, '31-45+': 0, '46-60': 0, '61-75': 0, '76-90+': 0}
-    
-    for _, row in df_filtered.iterrows():
-        golo_info = row['PRIMEIRO GOLO']
-        if pd.isna(golo_info) or golo_info in ['-', '---', ' - - ']:
-            sem_gols_info += 1
-            continue
+    tied_games = []
+    for _, row in df.iterrows():
+        # Lógica simples para o intervalo, pois não temos a minutagem de todos os gols
+        if minute_mark == 45 and row['GOALS_H_HT'] == row['GOALS_A_HT']:
+            tied_games.append(row['CASA']) # Adiciona 'SIM' se a casa venceu, 'NÃO' caso contrário
             
-        if 'casa' in golo_info.lower():
-            casa_primeiro += 1
-        elif 'visitante' in golo_info.lower():
-            visitante_primeiro += 1
-            
-        minute_match = re.search(r'(\d+)', golo_info)
-        if minute_match:
-            minute = int(minute_match.group(1))
-            if minute <= 15: bins['0-15'] += 1
-            elif minute <= 30: bins['16-30'] += 1
-            elif minute <= 45: bins['31-45+'] += 1
-            elif minute <= 60: bins['46-60'] += 1
-            elif minute <= 75: bins['61-75'] += 1
-            else: bins['76-90+'] += 1
+    if not tied_games: return None
+
+    total_cases = len(tied_games)
+    home_wins = tied_games.count('SIM')
+    draws_or_away_wins = total_cases - home_wins
     
-    total_com_info = casa_primeiro + visitante_primeiro
-    quem_marcou_summary = {
-        'Casa': casa_primeiro,
-        'Visitante': visitante_primeiro,
-        'Casa (%)': (casa_primeiro / total_com_info * 100) if total_com_info > 0 else 0,
-        'Visitante (%)': (visitante_primeiro / total_com_info * 100) if total_com_info > 0 else 0,
-        'Jogos sem Info/Gols': sem_gols_info
+    return {
+        "total_cases": total_cases,
+        "home_wins": home_wins,
+        "home_win_rate": (home_wins / total_cases * 100) if total_cases > 0 else 0
     }
+
+def analyze_comebacks(df):
+    """Analisa viradas no segundo tempo."""
+    # Casa estava perdendo no HT e não perdeu no FT
+    home_comeback = df[(df['GOALS_H_HT'] < df['GOALS_A_HT']) & (df['GOALS_H_FT'] >= df['GOALS_A_FT'])].shape[0]
+    home_losing_at_ht = df[df['GOALS_H_HT'] < df['GOALS_A_HT']].shape[0]
     
-    df_timing = pd.DataFrame(list(bins.items()), columns=['Intervalo (min)', 'Nº de Gols'])
-    return quem_marcou_summary, df_timing
+    # Visitante estava perdendo no HT e não perdeu no FT
+    away_comeback = df[(df['GOALS_H_HT'] > df['GOALS_A_HT']) & (df['GOALS_H_FT'] <= df['GOALS_A_FT'])].shape[0]
+    away_losing_at_ht = df[df['GOALS_H_HT'] > df['GOALS_A_HT']].shape[0]
+
+    return {
+        "home_comeback_rate": (home_comeback / home_losing_at_ht * 100) if home_losing_at_ht > 0 else 0,
+        "home_total_cases": home_losing_at_ht,
+        "away_comeback_rate": (away_comeback / away_losing_at_ht * 100) if away_losing_at_ht > 0 else 0,
+        "away_total_cases": away_losing_at_ht
+    }
 
 
 # --- Interface Principal do Streamlit ---
 
-st.title("BetAnalyzer Pro 🔬 - Análise e Backtesting de Estratégias")
+st.title("BetAnalyzer Pro 🔬 - Análise de Dados e Backtesting")
 
-st.sidebar.image("https://i.imgur.com/V9Lcw00.png", width=50)
 st.sidebar.header("Fonte de Dados")
-data_source = st.sidebar.radio(
-    "Escolha a base de dados para analisar:",
-    ('Padrão (GitHub - Desativado)', 'Carregar minha Planilha'), index=1
-)
-
-df = pd.DataFrame()
-is_default_db = True
+uploaded_file = st.sidebar.file_uploader("Carregue sua planilha (.xlsx, .xls)", type=['xlsx', 'xls'])
 
 if 'df' not in st.session_state:
     st.session_state.df = pd.DataFrame()
-    st.session_state.is_default_db = True
 
-if data_source == 'Padrão (GitHub - Desativado)':
-    st.sidebar.warning("Opção desativada temporariamente. Por favor, carregue sua planilha.")
-else:
-    uploaded_file = st.sidebar.file_uploader("Carregue sua planilha (.xlsx, .xls)", type=['xlsx', 'xls'])
-    if uploaded_file is not None:
-        with st.spinner("Lendo e processando sua planilha..."):
-            # --- CORREÇÃO PRINCIPAL APLICADA AQUI ---
-            # Ignora as 3 primeiras linhas (resumo e linha em branco)
-            df_user = pd.read_excel(uploaded_file, skiprows=3, engine='openpyxl' if uploaded_file.name.endswith('xlsx') else 'xlrd')
-            df, success = preprocess_user_data(df_user)
-            if success:
-                st.session_state.df = df
-                st.session_state.is_default_db = False
+if uploaded_file is not None:
+    with st.spinner("Lendo e processando sua planilha..."):
+        # Usa 'openpyxl' para .xlsx e 'xlrd' para o formato antigo .xls
+        engine = 'openpyxl' if uploaded_file.name.endswith('xlsx') else 'xlrd'
+        df_user = pd.read_excel(uploaded_file, engine=engine)
+        st.session_state.df = preprocess_user_data(df_user)
 
-# --- UI Principal ---
 if not st.session_state.df.empty:
-    df_to_analyze = st.session_state.df
-    
-    # Filtros Gerais
+    df = st.session_state.df
+
+    # Filtros Gerais na Sidebar
     st.sidebar.header("Filtros Gerais")
-    leagues = ['Todas'] + sorted(df_to_analyze['LIGA'].unique().tolist())
+    leagues = ['Todas'] + sorted(df['LIGA'].unique().tolist())
     selected_league = st.sidebar.selectbox("Filtrar por Liga", leagues)
-
-    min_odd_val = 1.0
-    max_odd_val = 20.0
-    if 'ODD' in df_to_analyze.columns and not df_to_analyze['ODD'].isna().all():
-        min_odd_val = max(1.0, float(df_to_analyze['ODD'].min()))
-        max_odd_val = float(df_to_analyze['ODD'].max())
-
-    min_odd_filter, max_odd_filter = st.sidebar.slider(
-        "Filtrar por Faixa de Odd", min_odd_val, max_odd_val, (min_odd_val, max_odd_val)
-    )
-
-    # Aplica os filtros
-    filtered_df = df_to_analyze.copy()
+    
+    filtered_df = df.copy()
     if selected_league != 'Todas':
         filtered_df = filtered_df[filtered_df['LIGA'] == selected_league]
-    if 'ODD' in filtered_df.columns:
-        filtered_df = filtered_df[(filtered_df['ODD'] >= min_odd_filter) & (filtered_df['ODD'] <= max_odd_filter)]
-    
-    st.header("Análise Geral")
-    st.info(f"{len(filtered_df)} jogos encontrados com os filtros aplicados.")
 
-    # Abas de Análise
-    tab1, tab2, tab3 = st.tabs(["📊 Backtest de Estratégias", "🎯 Placar Exato (Correct Score)", "⏱️ Análise de Gols"])
+    st.success(f"Análise baseada em **{len(filtered_df)}** jogos.")
+
+    # --- Abas de Análise ---
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 Dashboard Geral", " сценаários de Jogo", "🎯 Placar Exato (CS)", "⚙️ Backtesting Detalhado"])
 
     with tab1:
-        st.subheader("Selecione uma estratégia para o backtest:")
-        selected_strategy = st.selectbox("Estratégia", SIMPLE_MARKET_LIST, help="Resultados baseados nas colunas SIM/NÃO da sua planilha.")
+        st.header("Dashboard Geral de Tendências")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Média de Gols (FT)", f"{filtered_df['TOTAL_GOALS_FT'].mean():.2f}")
+        col2.metric("Média de Gols (HT)", f"{filtered_df['TOTAL_GOALS_HT'].mean():.2f}")
+        btts_rate = (filtered_df['BTTS SIM'] == 'SIM').mean() * 100
+        col3.metric("Ambas Marcam (BTTS)", f"{btts_rate:.2f}%")
         
-        if st.button("Executar Backtest", key="run_simple_backtest", type="primary"):
-            if not filtered_df.empty:
-                with st.spinner("Calculando resultados..."):
-                    results_df, metrics = run_backtest_simple(filtered_df, selected_strategy)
-                    
-                    if not results_df.empty:
-                        st.markdown(f"#### Resultados para a Estratégia: **{selected_strategy}**")
-                        kpi1, kpi2, kpi3 = st.columns(3)
-                        kpi1.metric("Total de Apostas", metrics['total_bets'])
-                        kpi2.metric("Taxa de Acerto", f"{metrics['win_rate']:.2f}%")
-                        kpi3.metric("ROI", f"{metrics['roi']:.2f}%")
-                        
-                        st.line_chart(results_df, x='Data', y='Lucro Acumulado')
-                        
-                        with st.expander("Ver jogos do backtest"):
-                            st.dataframe(results_df)
-                    else:
-                        st.warning("Nenhum resultado para exibir.")
-            else:
-                st.warning("Nenhum jogo corresponde aos filtros para executar o backtest.")
+        st.markdown("---")
+        
+        st.subheader("Análise de Resultados Finais")
+        results_counts = filtered_df[['CASA', 'EMPATE', 'VISITANTE']].apply(lambda x: (x == 'SIM').sum())
+        results_counts.name = "Ocorrências"
+        st.bar_chart(results_counts)
 
     with tab2:
-        st.subheader("Análise de Frequência de Placar Exato")
-        if st.button("Analisar Placares", key="run_cs_analysis"):
-            with st.spinner("Analisando placares..."):
-                cs_summary = analyze_correct_score(filtered_df)
-                if not cs_summary.empty:
-                    st.bar_chart(cs_summary.head(15).set_index('Placar Exato'), y='Ocorrências')
-                    st.dataframe(cs_summary, use_container_width=True)
-                else:
-                    st.warning("Não foi possível analisar os placares. Verifique se a planilha contém os resultados dos jogos.")
+        st.header("Análise de Cenários de Jogo")
+        
+        st.subheader("Cenário: Jogo Empatado no Intervalo (HT)")
+        ht_tied_scenario = analyze_scenario_tied_at_minute(filtered_df, 45)
+        if ht_tied_scenario:
+            c1, c2 = st.columns(2)
+            c1.metric("Nº de Jogos Empatados no HT", f"{ht_tied_scenario['total_cases']}")
+            c2.metric("% de Vitória da Casa no Final", f"{ht_tied_scenario['home_win_rate']:.2f}%", help="Dos jogos empatados no HT, quantos a casa venceu no final.")
+        else:
+            st.info("Não há dados suficientes para analisar este cenário.")
+            
+        st.markdown("---")
+        
+        st.subheader("Análise de 'Comebacks' (Viradas)")
+        comeback_data = analyze_comebacks(filtered_df)
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric(
+                "Taxa de Comeback da CASA", f"{comeback_data['home_comeback_rate']:.2f}%",
+                help=f"Das {comeback_data['home_total_cases']} vezes que a casa estava perdendo no HT, ela evitou a derrota (empatou ou venceu)."
+            )
+        with c2:
+             st.metric(
+                "Taxa de Comeback do VISITANTE", f"{comeback_data['away_comeback_rate']:.2f}%",
+                help=f"Das {comeback_data['away_total_cases']} vezes que o visitante estava perdendo no HT, ele evitou a derrota."
+            )
 
     with tab3:
-        st.subheader("Análise de Timing do Primeiro Gol")
-        if st.button("Analisar Gols", key="run_goal_analysis"):
-            with st.spinner("Analisando gols..."):
-                quem_marcou, timing_gols = analyze_goal_timing(filtered_df)
-                if quem_marcou:
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.markdown("##### Quem Marcou Primeiro?")
-                        st.metric("Casa", f"{quem_marcou['Casa']} ({quem_marcou['Casa (%)']:.1f}%)")
-                        st.metric("Visitante", f"{quem_marcou['Visitante']} ({quem_marcou['Visitante (%)']:.1f}%)")
-                        st.caption(f"Jogos sem info/gols: {quem_marcou['Jogos sem Info/Gols']}")
-                    with col2:
-                        st.markdown("##### Quando Saiu o Primeiro Gol?")
-                        st.bar_chart(timing_gols.set_index('Intervalo (min)'), y='Nº de Gols')
-                else:
-                    st.warning("Coluna 'PRIMEIRO GOLO' não encontrada ou vazia.")
+        st.header("Análise de Placar Exato (Correct Score)")
+        fig = create_correct_score_matrix(filtered_df)
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.warning("Não foi possível gerar a matriz de placares.")
+
+    with tab4:
+        st.header("Backtesting de Estratégias Específicas")
+        
+        all_markets = [col for col in filtered_df.columns if col in ['CASA', 'EMPATE', 'VISITANTE', 'BTTS SIM'] or 'OVER' in col or 'UNDER' in col]
+        selected_market = st.selectbox("Escolha o mercado para o backtest:", sorted(all_markets))
+        
+        if st.button("Executar Backtest da Estratégia", type="primary"):
+            wins = (filtered_df[selected_market] == 'SIM').sum()
+            total_bets = len(filtered_df)
+            win_rate = (wins / total_bets) * 100 if total_bets > 0 else 0
+            
+            st.subheader(f"Resultados para a aposta: '{selected_market}'")
+            kpi1, kpi2 = st.columns(2)
+            kpi1.metric("Total de Apostas", total_bets)
+            kpi2.metric("Taxa de Acerto", f"{win_rate:.2f}%")
+            
+            if 'ODD' in filtered_df.columns and not filtered_df['ODD'].isna().all():
+                # Simulação de lucro se a coluna ODD existir
+                lucro = np.where(filtered_df[selected_market] == 'SIM', filtered_df['ODD'] - 1, -1).sum()
+                roi = (lucro / total_bets) * 100 if total_bets > 0 else 0
+                st.metric("Lucro/Perda Simulado", f"{lucro:.2f} unidades", help="Calculado apenas se a coluna 'ODD' existir e for válida.")
+                st.metric("ROI Simulado", f"{roi:.2f}%")
 
 else:
-    st.info("Aguardando carregamento de dados. Use a barra lateral para começar.")
+    st.info("👋 Bem-vindo ao BetAnalyzer Pro! Por favor, carregue sua planilha na barra lateral para começar.")
